@@ -29,7 +29,7 @@ gem "rails-html-sanitizer", ">= 1.0.3"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :x64_mingw, :mswin]
-gem "rbpdf", "~> 1.19.3"
+gem "rbpdf", "~> 1.19.5"
 
 # Optional gem for LDAP authentication
 group :ldap do
@@ -58,32 +58,36 @@ end
 # configuration file
 require 'erb'
 require 'yaml'
-database_file = File.join(File.dirname(__FILE__), "config/database.yml")
-if File.exist?(database_file)
-  database_config = YAML::load(ERB.new(IO.read(database_file)).result)
-  adapters = database_config.values.map {|c| c['adapter']}.compact.uniq
-  if adapters.any?
-    adapters.each do |adapter|
-      case adapter
-      when 'mysql2'
-        gem "mysql2", "~> 0.4.6", :platforms => [:mri, :mingw, :x64_mingw]
-      when /postgresql/
-        gem "pg", "~> 0.18.1", :platforms => [:mri, :mingw, :x64_mingw]
-      when /sqlite3/
-        gem "sqlite3", (RUBY_VERSION < "2.0" && RUBY_PLATFORM =~ /mingw/ ? "1.3.12" : "~>1.3.12"),
-                       :platforms => [:mri, :mingw, :x64_mingw]
-      when /sqlserver/
-        gem "tiny_tds", (RUBY_VERSION >= "2.0" ? "~> 1.0.5" : "~> 0.7.0"), :platforms => [:mri, :mingw, :x64_mingw]
-        gem "activerecord-sqlserver-adapter", :platforms => [:mri, :mingw, :x64_mingw]
-      else
-        warn("Unknown database adapter `#{adapter}` found in config/database.yml, use Gemfile.local to load your own database gems")
-      end
-    end
-  else
-    warn("No adapter found in config/database.yml, please configure it first")
-  end
-else
-  warn("Please configure your config/database.yml first")
+# database_file = File.join(File.dirname(__FILE__), "config/database.yml")
+# if File.exist?(database_file)
+#   database_config = YAML::load(ERB.new(IO.read(database_file)).result)
+#   adapters = database_config.values.map {|c| c['adapter']}.compact.uniq
+#   if adapters.any?
+#     adapters.each do |adapter|
+#       case adapter
+#       when 'mysql2'
+#         gem "mysql2", "~> 0.4.6", :platforms => [:mri, :mingw, :x64_mingw]
+#       when /postgresql/
+#         gem "pg", "~> 0.18.1", :platforms => [:mri, :mingw, :x64_mingw]
+#       when /sqlite3/
+#         gem "sqlite3", (RUBY_VERSION < "2.0" && RUBY_PLATFORM =~ /mingw/ ? "1.3.12" : "~>1.3.12"),
+#                        :platforms => [:mri, :mingw, :x64_mingw]
+#       when /sqlserver/
+#         gem "tiny_tds", (RUBY_VERSION >= "2.0" ? "~> 1.0.5" : "~> 0.7.0"), :platforms => [:mri, :mingw, :x64_mingw]
+#         gem "activerecord-sqlserver-adapter", :platforms => [:mri, :mingw, :x64_mingw]
+#       else
+#         warn("Unknown database adapter `#{adapter}` found in config/database.yml, use Gemfile.local to load your own database gems")
+#       end
+#     end
+#   else
+#     warn("No adapter found in config/database.yml, please configure it first")
+#   end
+# else
+#   warn("Please configure your config/database.yml first")
+# end
+
+group :production do
+  gem 'pg', '~> 0.20'
 end
 
 group :development do
@@ -102,6 +106,8 @@ group :test do
   gem "capybara", '~> 2.13'
   gem "selenium-webdriver", "~> 2.53.4"
 end
+
+gem "dotenv-rails", groups: [:development, :test]
 
 local_gemfile = File.join(File.dirname(__FILE__), "Gemfile.local")
 if File.exists?(local_gemfile)

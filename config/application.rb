@@ -3,6 +3,9 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 Bundler.require(*Rails.groups)
+if Rails.env.test? || Rails.env.development?
+    Dotenv::Railtie.load
+end 
 
 module RedmineApp
   class Application < Rails::Application
@@ -71,6 +74,8 @@ module RedmineApp
     # Configure log level here so that additional environment file
     # can change it (environments/ENV.rb would take precedence over it)
     config.log_level = Rails.env.production? ? :info : :debug
+
+    config.assets.initialize_on_precompile = false
 
     config.session_store :cookie_store,
       :key => '_redmine_session',

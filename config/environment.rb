@@ -7,8 +7,17 @@ if Dir.glob(File.join(vendor_plugins_dir, "*")).any?
   $stderr.puts "Plugins in vendor/plugins (#{vendor_plugins_dir}) are no longer allowed. " +
     "Please, put your Redmine plugins in the `plugins` directory at the root of your " +
     "Redmine directory (#{File.join(Rails.root, "plugins")})"
-  exit 1
 end
+
+ActionMailer::Base.smtp_settings = {
+  :user_name => ENV['SENDGRID_USERNAME'],
+  :password => ENV['SENDGRID_PASSWORD'],
+  :domain => ENV['DOMAIN'],
+  :address => 'smtp.sendgrid.net',
+  :port => 587,
+  :authentication => :plain,
+  :enable_starttls_auto => true
+}
 
 # Initialize the Rails application
 Rails.application.initialize!

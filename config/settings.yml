@@ -97,9 +97,9 @@ force_default_language_for_anonymous:
 force_default_language_for_loggedin:
   default: 0
 host_name:
-  default: localhost:3000
+  default: senyours-redmine.herokuapp.com
 protocol:
-  default: http
+  default: https
   security_notifications: 1
 feeds_limit:
   format: int
